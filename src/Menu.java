@@ -37,6 +37,7 @@ public class Menu {
 	}
 	
 	public static void menuInterno(Socket socket, DataInputStream in, DataOutputStream out) throws UnknownHostException, IOException{
+		out.writeInt(2);
 		System.out.println("----- Escolha uma opção -----");
 		System.out.println("1- Listar todos os livros");
 		System.out.println("2- Emprestar um livro");
@@ -55,13 +56,24 @@ public class Menu {
 				menuInterno(socket, in, out);
 				break;
 			case 2:
-				out.writeInt(opcao);
+				System.out.print("Nome do livro: ");
+				String tituloLivro = sc.next();
+				out.writeUTF(tituloLivro);
+				System.out.println(in.readUTF());
 				break;
 			case 3:
 				out.writeInt(opcao);
 				break;
 			case 4:
 				out.writeInt(opcao);
+				System.out.print("Nome do livro: ");
+				String nomeLivro = sc.next();
+				System.out.print("Ano de Publicação: ");
+				int anoPublicacao = sc.nextInt();
+				out.writeUTF(nomeLivro);
+				out.writeInt(anoPublicacao);
+				System.out.println(in.readUTF());
+				menuInterno(socket, in, out);
 				break;
 			case 5:
 				out.writeInt(opcao);

@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class Biblioteca {
 	private List<Livro> livros;
@@ -27,6 +26,10 @@ public class Biblioteca {
 		livros.add(livro);
 		emprestimos.put(livro.getTituloLivro(), 0);
 		return "Livro adicionado com sucesso";
+	}
+	
+	public synchronized int quantidadeLivros(){
+		return livros.size();
 	}
 	
 	public synchronized String removerLivro(String titulo){
@@ -100,6 +103,15 @@ public class Biblioteca {
 		}
 		return false;
 	}
+	
+	public synchronized int posicaoUsuario(String nome, String senha){
+		for(int i = 0; i < usuarios.size(); i++){
+			Usuario u = usuarios.get(i);
+			if(nome.equals(u.getNomeUsuario()) && senha.equals(u.getSenha()))
+				return i;
+		}
+		return -1;
+	}	
 	
 	public synchronized String listarTodosLivros(){
 		String todosLivros = "";

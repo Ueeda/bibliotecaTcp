@@ -22,11 +22,35 @@ public class Bibliotecario extends Thread{
 			String senhaCliente = in.readUTF();
 			
 			out.writeBoolean(biblioteca.existeUsuario(nomeCliente, senhaCliente));
+			if(biblioteca.existeUsuario(nomeCliente, senhaCliente))
+				usuarioAtendido = biblioteca.posicaoUsuario(nomeCliente, senhaCliente);
 			
-			int opcao = in.readInt();
+			int menulogado = in.readInt();
 			
-			if(opcao == 1){
-				out.writeUTF(biblioteca.listarTodosLivros());
+			while(menulogado == 2){
+				int opcao = in.readInt();
+				switch(opcao){
+					case 1:
+						out.writeUTF(biblioteca.listarTodosLivros());
+						break;
+					case 2:
+						String tituloSolicitado = in.readUTF();
+						out.writeUTF(biblioteca.emprestarLivro(tituloSolicitado, usuarioAtendido));
+						break;
+					case 3:
+						break;
+					case 4:
+						String tituloLivro = in.readUTF();
+						int anoPublicacao = in.readInt();
+						int codigo = biblioteca.quantidadeLivros();
+						Livro l = new Livro(codigo, tituloLivro, anoPublicacao);
+						out.writeUTF(biblioteca.adicionarLivro(l));
+						break;
+					case 5:
+						break;
+					
+				}
+				menulogado = in.readInt();
 			}
 			
 		} catch (IOException e) {
