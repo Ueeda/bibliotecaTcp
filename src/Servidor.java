@@ -13,7 +13,7 @@ public class Servidor {
 			while(true){
 				Socket socket = server.accept();
 				Bibliotecario bibliotecario = new Bibliotecario(socket, biblioteca);
-				bibliotecario.run();
+				bibliotecario.start();
 			}
 		}
 	}

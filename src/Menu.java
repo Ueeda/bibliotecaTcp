@@ -53,9 +53,9 @@ public class Menu {
 				out.writeInt(opcao);
 				String todosLivros = in.readUTF();
 				System.out.println(todosLivros);
-				menuInterno(socket, in, out);
 				break;
 			case 2:
+				out.writeInt(opcao);
 				System.out.print("Nome do livro: ");
 				String tituloLivro = sc.next();
 				out.writeUTF(tituloLivro);
@@ -63,20 +63,27 @@ public class Menu {
 				break;
 			case 3:
 				out.writeInt(opcao);
+				System.out.print("Nome do livro: ");
+				String livroDevolvido = sc.next();
+				out.writeUTF(livroDevolvido);
+				System.out.println(in.readUTF());
 				break;
 			case 4:
 				out.writeInt(opcao);
 				System.out.print("Nome do livro: ");
-				String nomeLivro = sc.next();
+				String livroAdicionar = sc.next();
 				System.out.print("Ano de Publicação: ");
 				int anoPublicacao = sc.nextInt();
-				out.writeUTF(nomeLivro);
+				out.writeUTF(livroAdicionar);
 				out.writeInt(anoPublicacao);
 				System.out.println(in.readUTF());
-				menuInterno(socket, in, out);
 				break;
 			case 5:
 				out.writeInt(opcao);
+				System.out.print("Nome do livro: ");
+				String livroRemover = sc.next();
+				out.writeUTF(livroRemover);
+				System.out.println(in.readUTF());
 				break;
 			case 6:
 				System.out.println("Voltando para o menu principal");
@@ -84,9 +91,10 @@ public class Menu {
 				break;
 			default: 
 				System.out.println("Digite uma opção correspondente");
-				menuInterno(socket, in, out);
 				break;
 		}
+
+		menuInterno(socket, in, out);
 	}
 	
 	public static void mensagemErro(){

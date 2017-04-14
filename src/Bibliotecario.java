@@ -38,15 +38,19 @@ public class Bibliotecario extends Thread{
 						out.writeUTF(biblioteca.emprestarLivro(tituloSolicitado, usuarioAtendido));
 						break;
 					case 3:
+						String tituloDevolvido = in.readUTF();
+						out.writeUTF(biblioteca.devolverLivro(tituloDevolvido, usuarioAtendido));
 						break;
 					case 4:
-						String tituloLivro = in.readUTF();
+						String tituloAdicionar = in.readUTF();
 						int anoPublicacao = in.readInt();
 						int codigo = biblioteca.quantidadeLivros();
-						Livro l = new Livro(codigo, tituloLivro, anoPublicacao);
-						out.writeUTF(biblioteca.adicionarLivro(l));
+						Livro l = new Livro(codigo, tituloAdicionar, anoPublicacao);
+						out.writeUTF(biblioteca.adicionarLivro(l, usuarioAtendido));
 						break;
 					case 5:
+						String tituloRemover = in.readUTF();
+						out.writeUTF(biblioteca.removerLivro(tituloRemover, usuarioAtendido));
 						break;
 					
 				}

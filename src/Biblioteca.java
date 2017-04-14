@@ -12,27 +12,34 @@ public class Biblioteca {
 		this.usuarios = new ArrayList<Usuario>();
 		this.emprestimos = new HashMap<String, Integer>();
 		this.usuarios.add(new Usuario("Vilmar", usuarios.size(), "1234", 1));
-		this.usuarios.add(new Usuario("Rafael", usuarios.size(), "1234", 1));
+		this.usuarios.add(new Usuario("Rafael", usuarios.size(), "1234", 0));
+		this.usuarios.add(new Usuario("Vinicius", usuarios.size(), "1234", 0));
 		this.livros.add(new Livro(livros.size(), "Naruto", 2008));
-		this.livros.add(new Livro(livros.size(), "Cavaleiros do Zodíaco", 2003));
+		this.livros.add(new Livro(livros.size(), "CDZ", 2003));
+		this.livros.add(new Livro(livros.size(), "Boruto", 2003));
 	}
 	
-	public synchronized String adicionarLivro(Livro livro){
+	public int quantidadeLivros(){
+		return livros.size();
+	}
+	
+	public synchronized String adicionarLivro(Livro livro, int usuarioAtendido){
+		Usuario u = usuarios.get(usuarioAtendido);
+		if(! u.isAdmin())
+			return "Você não pode realizar a operação";
 		for(Livro l : livros){
 			if(l.getTituloLivro().equals(livro.getTituloLivro())){
 				return "Não foi possível realizar a adição do livro";
 			}
 		}
 		livros.add(livro);
-		emprestimos.put(livro.getTituloLivro(), 0);
 		return "Livro adicionado com sucesso";
 	}
 	
-	public synchronized int quantidadeLivros(){
-		return livros.size();
-	}
-	
-	public synchronized String removerLivro(String titulo){
+	public synchronized String removerLivro(String titulo, int usuarioAtendido){
+		Usuario u = usuarios.get(usuarioAtendido);
+		if(! u.isAdmin())
+			return "Você não pode realizar a operação";
 		int posicaoLivro = this.posicaoLivro(titulo);
 		while(isEmprestado(titulo)){
 			try {
@@ -46,7 +53,7 @@ public class Biblioteca {
 		return "Livro removido com sucesso";
 	}
 	
-	public synchronized int posicaoLivro(String titulo){
+	public int posicaoLivro(String titulo){
 		for(int i = 0; i < livros.size(); i++){
 			Livro l = livros.get(i);
 			if(l.getTituloLivro().equals(titulo))
@@ -64,39 +71,33 @@ public class Biblioteca {
 				e.printStackTrace();
 			}
 		}
-		for(String t : emprestimos.keySet()){
-			int donoEmprestimo = emprestimos.get(t);
-			if(t.equals(titulo) && donoEmprestimo != 0){
-				emprestimos.put(titulo, idUsuario);
-				return "Emprestimo realizado com sucesso";
-			}
-		}
-		return "Não foi possível realizar o emprestimo, pois alguém já emprestou o livro";		
+		emprestimos.put(titulo, idUsuario);
+		return "Emprestimo realizado com sucesso";				
 	}
 	
 	public synchronized String devolverLivro(String titulo, int idUsuario){
 		for(String t : emprestimos.keySet()){
 			int donoEmprestimo = emprestimos.get(t);
-			if(t.equals(titulo) && donoEmprestimo == 0){
-				emprestimos.put(titulo, idUsuario);
+			if(t.equals(titulo) && donoEmprestimo == idUsuario){
+				emprestimos.remove(titulo, idUsuario);
+				notifyAll();
 				return "Devolução realizada com sucesso";
 			}
 		}
-		notifyAll();
+		
 		return "Não foi possível devolver o livro porque você não é o dono do empréstimo";	
 	}
 	
-	public synchronized boolean isEmprestado(String titulo){
+	public boolean isEmprestado(String titulo){
 		for(String t : emprestimos.keySet()){
-			int donoEmprestimo = emprestimos.get(t);
-			if(t.equals(titulo) && donoEmprestimo != 0){
+			if(t.equals(titulo)){
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	public synchronized boolean existeUsuario(String nome, String senha){
+	public boolean existeUsuario(String nome, String senha){
 		for(Usuario u : usuarios){
 			if(nome.equals(u.getNomeUsuario()) && senha.equals(u.getSenha()))
 				return true;
@@ -104,7 +105,7 @@ public class Biblioteca {
 		return false;
 	}
 	
-	public synchronized int posicaoUsuario(String nome, String senha){
+	public int posicaoUsuario(String nome, String senha){
 		for(int i = 0; i < usuarios.size(); i++){
 			Usuario u = usuarios.get(i);
 			if(nome.equals(u.getNomeUsuario()) && senha.equals(u.getSenha()))
@@ -113,7 +114,7 @@ public class Biblioteca {
 		return -1;
 	}	
 	
-	public synchronized String listarTodosLivros(){
+	public String listarTodosLivros(){
 		String todosLivros = "";
 		for(Livro l :livros){
 			todosLivros += "Titulo: " + l.getTituloLivro() + ", Ano de publicação: " + l.getAnoPublicacao() + "\n"; 
